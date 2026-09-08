@@ -12,7 +12,7 @@ async function fetchHealth(): Promise<HealthStatus | null> {
   }
 }
 
-export default async function StatusPage(): Promise<JSX.Element> {
+export default async function StatusPage(): Promise<React.JSX.Element> {
   const health = await fetchHealth();
   const reachable = health !== null;
   const dbUp = health?.database === 'up';
@@ -60,7 +60,7 @@ function StatusRow({
   ok: boolean;
   okText: string;
   badText: string;
-}): JSX.Element {
+}): React.JSX.Element {
   return (
     <div className="flex items-center justify-between">
       <span className="font-medium">{label}</span>
