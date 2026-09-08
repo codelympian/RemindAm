@@ -20,6 +20,9 @@ export default function HomePage(): React.JSX.Element {
             </SignUpButton>
           </Show>
           <Show when="signed-in">
+            <Link href="/account" className="text-sm font-medium hover:underline">
+              Account
+            </Link>
             <Link href="/status" className="text-sm font-medium hover:underline">
               Status
             </Link>

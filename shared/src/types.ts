@@ -27,3 +27,17 @@ export interface HealthStatus {
   timestamp: string;
   database?: 'up' | 'down';
 }
+
+/**
+ * The authenticated user's profile as synchronized from Clerk into the local
+ * database. Returned by `GET /api/me`; the shape both apps agree on.
+ */
+export interface UserProfile {
+  id: string;
+  clerkUserId: string;
+  email: string;
+  firstName: string | null;
+  lastName: string | null;
+  createdAt: string; // ISO 8601
+  updatedAt: string; // ISO 8601
+}

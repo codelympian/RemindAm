@@ -44,3 +44,6 @@ Thumbs.db
 
 # Misc
 *.local
+
+# Local-only reference docs (kept in the project folder, never committed)
+RemindAm_Master_Build_Prompt.md
