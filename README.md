@@ -1,0 +1,137 @@
+# RemindAm
+
+> **Your daily sales assistant.** Know exactly who to follow up with today.
+
+RemindAm helps Nigerian SMEs identify the customers and leads they should contact
+every day — hot leads, reorders due, unpaid customers, and reactivations — with a
+suggested WhatsApp message for each.
+
+This repository is a monorepo with three independent parts:
+
+```
+frontend/   Next.js 14 (App Router) — UI, presentation, API calls
+backend/    NestJS 10 + Prisma — API, business logic, database access
+shared/     TypeScript package — enums, constants, and cross-cutting types
+```
+
+**Architecture rule:** the frontend never touches the database. All application
+data flows through the backend HTTP API and Prisma. Authentication uses Clerk
+(added in Phase 1); Postgres (Supabase in production) is the source of truth for
+business data.
+
+---
+
+## Prerequisites
+
+- **Node.js** ≥ 20 (built with v24) and npm
+- **PostgreSQL** — one of:
+  - A local PostgreSQL server on `localhost:5432`, **or**
+  - Docker (use the bundled `docker-compose.yml`), **or**
+  - A Supabase project (production/staging)
+
+---
+
+## Getting started
+
+### 1. Clone and install
+
+```bash
+git clone <repo-url> RemindAmApp
+cd RemindAmApp
+
+# Install every workspace (shared is built first — backend/frontend depend on it)
+npm run install:all
+npm run build:shared
+```
+
+### 2. Configure environment variables
+
+Copy the relevant sections of `.env.example` into two files:
+
+- `backend/.env`
+- `frontend/.env.local`
+
+`.env.example` documents every variable. At minimum the backend needs
+`DATABASE_URL`; the frontend needs `NEXT_PUBLIC_API_URL` (defaults to
+`http://localhost:4000`).
+
+### 3. Provide a database
+
+**Option A — Docker (recommended for a clean machine):**
+
+```bash
+npm run db:up        # starts Postgres 16 on localhost:5432
+```
+
+`DATABASE_URL` in `.env.example` already matches this container
+(`remindam:remindam@localhost:5432/remindam`).
+
+**Option B — an existing local PostgreSQL server:**
+
+Create a dedicated role and database (run as a superuser such as `postgres`):
+
+```sql
+CREATE ROLE remindam LOGIN PASSWORD 'remindam';
+ALTER ROLE remindam CREATEDB;              -- needed for Prisma's shadow database
+CREATE DATABASE remindam OWNER remindam;
+```
+
+Then point `DATABASE_URL` at it (the default value already matches the above).
+
+**Option C — Supabase:**
+
+Set `DATABASE_URL` to your Supabase connection string:
+
+```
+postgresql://postgres:[PASSWORD]@db.[PROJECT].supabase.co:5432/postgres
+```
+
+> Only one Postgres can own `localhost:5432` at a time — don't run the Docker
+> container and a native Postgres on the same port simultaneously.
+
+### 4. Run migrations
+
+```bash
+cd backend
+npx prisma migrate dev     # applies migrations and generates the Prisma client
+```
+
+### 5. Start the apps
+
+From the repo root, in two terminals:
+
+```bash
+npm run dev:backend    # http://localhost:4000/api
+npm run dev:frontend   # http://localhost:3000
+```
+
+### 6. Verify
+
+- Backend health: <http://localhost:4000/api/health> → `{"status":"ok","database":"up"}`
+- Frontend status page: <http://localhost:3000/status> (shows live backend + DB status)
+
+---
+
+## Useful scripts (repo root)
+
+| Command | Description |
+| --- | --- |
+| `npm run install:all` | Install root + all three workspaces |
+| `npm run build:shared` | Compile the shared package to `dist/` |
+| `npm run dev:backend` | Start NestJS in watch mode |
+| `npm run dev:frontend` | Start Next.js dev server |
+| `npm run build` | Production build of shared + backend + frontend |
+| `npm run typecheck` | Type-check all workspaces |
+| `npm run lint` | Lint backend + frontend |
+| `npm run test` | Run backend tests |
+| `npm run db:up` / `npm run db:down` | Start/stop the Docker Postgres |
+| `npm run format` | Prettier write across the repo |
+
+---
+
+## Project status
+
+Built in phases (see `RemindAm_Master_Build_Prompt.md`). **Phase 0 (foundation)
+is complete**: monorepo, both apps, shared package, Prisma schema + initial
+migration, Docker Postgres, linting/formatting, health endpoint, and a status
+page — all verified end to end. Clerk authentication is Phase 1.
