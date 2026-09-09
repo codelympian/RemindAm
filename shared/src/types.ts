@@ -4,6 +4,8 @@
  * both apps rely on.
  */
 
+import { MembershipRole } from './enums';
+
 export interface ApiError {
   statusCode: number;
   error: string;
@@ -40,4 +42,45 @@ export interface UserProfile {
   lastName: string | null;
   createdAt: string; // ISO 8601
   updatedAt: string; // ISO 8601
+}
+
+/**
+ * A business (tenant) as returned by the API. `industry` holds the onboarding
+ * "category"; `customerTrackingMethod` is the onboarding survey answer.
+ * Returned by `POST /api/businesses` and `GET /api/businesses/:id`.
+ */
+export interface Business {
+  id: string;
+  name: string;
+  phone: string | null;
+  email: string | null;
+  industry: string | null;
+  customerTrackingMethod: string | null;
+  currency: string;
+  timezone: string;
+  createdAt: string; // ISO 8601
+  updatedAt: string; // ISO 8601
+}
+
+/**
+ * A lightweight business list item returned by `GET /api/businesses`, carrying
+ * the authenticated caller's role in that business.
+ */
+export interface BusinessSummary {
+  id: string;
+  name: string;
+  industry: string | null;
+  currency: string;
+  role: MembershipRole;
+}
+
+/**
+ * Request body for `POST /api/businesses` (onboarding completion). The server
+ * derives the owner from the verified Clerk session — never from this payload.
+ */
+export interface CreateBusinessInput {
+  name: string;
+  industry?: string | null;
+  phone?: string | null;
+  customerTrackingMethod?: string | null;
 }

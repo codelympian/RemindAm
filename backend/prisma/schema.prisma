@@ -30,15 +30,16 @@ model User {
 }
 
 model Business {
-  id        String   @id @default(uuid()) @db.Uuid
-  name      String
-  phone     String?
-  email     String?
-  industry  String?
-  currency  String   @default("NGN")
-  timezone  String   @default("Africa/Lagos")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id                     String   @id @default(uuid()) @db.Uuid
+  name                   String
+  phone                  String?
+  email                  String?
+  industry               String?
+  customerTrackingMethod String?  @map("customer_tracking_method")
+  currency               String   @default("NGN")
+  timezone               String   @default("Africa/Lagos")
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
 
   memberships     BusinessMembership[]
   customers       Customer[]

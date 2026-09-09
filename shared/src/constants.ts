@@ -6,6 +6,21 @@ export const DEFAULT_CURRENCY = 'NGN';
 export const DEFAULT_TIMEZONE = 'Africa/Lagos';
 
 /**
+ * Onboarding Step 4 — "How do you currently track customers?". The canonical
+ * set both apps agree on: the backend validates against it, the frontend
+ * renders it. Stored on `Business.customerTrackingMethod`.
+ */
+export const CUSTOMER_TRACKING_METHODS = [
+  'WhatsApp',
+  'Excel',
+  'Notebook',
+  'Phone contacts',
+  'Other',
+] as const;
+
+export type CustomerTrackingMethod = (typeof CUSTOMER_TRACKING_METHODS)[number];
+
+/**
  * Transparent priority-scoring weights for the recommendation engine.
  * Kept here so the contract is visible; the backend owns the actual scoring.
  */
@@ -22,4 +37,5 @@ export const MAX_SCORE = 100;
 
 export const API_ROUTES = {
   HEALTH: '/health',
+  BUSINESSES: '/businesses',
 } as const;

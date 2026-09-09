@@ -1,7 +1,11 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
 // Routes that require an authenticated Clerk session. `/status` stays public.
-const isProtectedRoute = createRouteMatcher(['/account(.*)']);
+const isProtectedRoute = createRouteMatcher([
+  '/account(.*)',
+  '/dashboard(.*)',
+  '/onboarding(.*)',
+]);
 
 export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) {

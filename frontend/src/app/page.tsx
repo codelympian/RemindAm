@@ -20,11 +20,11 @@ export default function HomePage(): React.JSX.Element {
             </SignUpButton>
           </Show>
           <Show when="signed-in">
+            <Link href="/dashboard" className="text-sm font-medium hover:underline">
+              Dashboard
+            </Link>
             <Link href="/account" className="text-sm font-medium hover:underline">
               Account
-            </Link>
-            <Link href="/status" className="text-sm font-medium hover:underline">
-              Status
             </Link>
             <UserButton />
           </Show>
@@ -52,7 +52,7 @@ export default function HomePage(): React.JSX.Element {
           </Show>
           <Show when="signed-in">
             <Link
-              href="/status"
+              href="/dashboard"
               className="rounded-lg bg-primary px-5 py-2.5 font-medium text-primary-foreground hover:opacity-90"
             >
               Go to app
@@ -66,7 +66,7 @@ export default function HomePage(): React.JSX.Element {
           </Link>
         </div>
         <p className="text-sm text-muted-foreground">
-          Phase 1 · Authentication is live. Onboarding and dashboard arrive in later phases.
+          Sign up to set up your business in a minute — then open your dashboard.
         </p>
       </main>
     </div>
