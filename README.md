@@ -9,7 +9,7 @@ suggested WhatsApp message for each.
 This repository is a monorepo with three independent parts:
 
 ```
-frontend/   Next.js 14 (App Router) — UI, presentation, API calls
+frontend/   Next.js 15 (App Router) — UI, presentation, API calls
 backend/    NestJS 10 + Prisma — API, business logic, database access
 shared/     TypeScript package — enums, constants, and cross-cutting types
 ```
@@ -131,7 +131,38 @@ npm run dev:frontend   # http://localhost:3000
 
 ## Project status
 
-Built in phases (see `RemindAm_Master_Build_Prompt.md`). **Phase 0 (foundation)
-is complete**: monorepo, both apps, shared package, Prisma schema + initial
-migration, Docker Postgres, linting/formatting, health endpoint, and a status
-page — all verified end to end. Clerk authentication is Phase 1.
+Built in phases. Each phase is a full vertical slice — UI → API → database →
+validation → tests → typecheck → lint → build → manual verification — and is
+signed off before the next begins.
+
+- **Phase 0 — Foundation** ✅ Monorepo, both apps, shared package, Prisma schema
+  + initial migration, Docker Postgres, linting/formatting, health endpoint, and
+  a live status page.
+- **Phase 1 — Authentication** ✅ Clerk sign-in/up on the frontend; the backend
+  verifies the session token and syncs the user into Postgres on the first
+  authenticated request (`GET /api/me`).
+- **Phase 2 — Business + onboarding** ✅ A guided onboarding wizard creates a
+  business and its `OWNER` membership atomically; the dashboard resolves the
+  caller's businesses server-side and redirects new users into onboarding.
+- **Phase 3 — Application shell** ✅ A protected `(app)` route group with a
+  desktop sidebar, a mobile navigation drawer, and a top bar (active-business
+  switcher + Clerk user menu). The active business is resolved and re-validated
+  on the server and shared across every authenticated route; each navigation
+  destination (Today, Customers, Leads, Sales, Products, Imports, Analytics,
+  Settings) renders inside the shell. _Typecheck, lint, and production build
+  green._
+
+**Next:** Phase 4 — Customer system (full CRUD, frontend → API → database).
+
+### Authenticated routes
+
+| Route | Status |
+| --- | --- |
+| `/dashboard` | Workspace landing (active business) |
+| `/today` · `/customers` · `/leads` · `/sales` · `/products` · `/imports` · `/analytics` · `/settings` | In the shell; feature ships in its phase |
+| `/account` | Clerk-synced profile |
+| `/onboarding` | Business setup wizard (shown when you have no business) |
+
+> Open the app at **`http://localhost:3000`**, not the LAN/"Network" URL that
+> `next dev` also prints — a session minted at a LAN origin fails the backend's
+> Clerk `authorizedParties` check and every authenticated call returns 401.

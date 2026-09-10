@@ -1,9 +1,18 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-// Routes that require an authenticated Clerk session. `/status` stays public.
+// Routes that require an authenticated Clerk session. The marketing home,
+// `/status`, and the Clerk sign-in/up routes stay public.
 const isProtectedRoute = createRouteMatcher([
-  '/account(.*)',
   '/dashboard(.*)',
+  '/today(.*)',
+  '/customers(.*)',
+  '/leads(.*)',
+  '/sales(.*)',
+  '/products(.*)',
+  '/imports(.*)',
+  '/analytics(.*)',
+  '/settings(.*)',
+  '/account(.*)',
   '/onboarding(.*)',
 ]);
 

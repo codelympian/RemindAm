@@ -4,9 +4,9 @@ import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 
 /**
- * Re-runs the dashboard server component (which re-fetches the workspace) without
- * a full page reload. `useTransition` keeps `isPending` accurate for the whole
- * refresh and resets it automatically when the new render commits.
+ * Re-runs the current server component tree (which re-fetches the workspace)
+ * without a full page reload. `useTransition` keeps `isPending` accurate for the
+ * whole refresh and resets it automatically when the new render commits.
  */
 export function RetryButton(): React.JSX.Element {
   const router = useRouter();
