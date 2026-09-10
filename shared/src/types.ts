@@ -84,3 +84,49 @@ export interface CreateBusinessInput {
   phone?: string | null;
   customerTrackingMethod?: string | null;
 }
+
+/**
+ * A customer as returned by the API. Scoped to a single business (tenant); the
+ * server resolves `businessId` from the validated `x-business-id` header, never
+ * from the client. Returned by the `/api/customers` endpoints.
+ */
+export interface Customer {
+  id: string;
+  businessId: string;
+  name: string;
+  phone: string | null;
+  email: string | null;
+  notes: string | null;
+  createdAt: string; // ISO 8601
+  updatedAt: string; // ISO 8601
+}
+
+/**
+ * Request body for `POST /api/customers`. The owning business comes from the
+ * `x-business-id` header (re-validated against the caller's memberships), so it
+ * is never part of this payload.
+ */
+export interface CreateCustomerInput {
+  name: string;
+  phone?: string | null;
+  email?: string | null;
+  notes?: string | null;
+}
+
+/** Request body for `PATCH /api/customers/:id` — any subset of the mutable fields. */
+export interface UpdateCustomerInput {
+  name?: string;
+  phone?: string | null;
+  email?: string | null;
+  notes?: string | null;
+}
+
+/**
+ * Query parameters for `GET /api/customers`. `q` searches name/phone/email
+ * (case-insensitive); paging defaults live in {@link DEFAULT_PAGE_SIZE}.
+ */
+export interface CustomerListParams {
+  q?: string;
+  page?: number;
+  pageSize?: number;
+}

@@ -151,15 +151,24 @@ signed off before the next begins.
   destination (Today, Customers, Leads, Sales, Products, Imports, Analytics,
   Settings) renders inside the shell. _Typecheck, lint, and production build
   green._
+- **Phase 4 — Customer system** ✅ Full customer CRUD as a vertical slice:
+  business-scoped `/api/customers` (create, paginated list, case-insensitive
+  search by name/phone/email, read, update, delete) that re-validates the
+  caller's membership on every request via an `x-business-id` header — never
+  trusting the client's business id (§46). The Customers screen adds debounced
+  search, pagination, an accessible create/edit dialog, a delete confirmation,
+  and honest empty / no-match / loading / error states. _Backend unit tests,
+  typecheck, lint, and production build green._
 
-**Next:** Phase 4 — Customer system (full CRUD, frontend → API → database).
+**Next:** Phase 5 — Products.
 
 ### Authenticated routes
 
 | Route | Status |
 | --- | --- |
 | `/dashboard` | Workspace landing (active business) |
-| `/today` · `/customers` · `/leads` · `/sales` · `/products` · `/imports` · `/analytics` · `/settings` | In the shell; feature ships in its phase |
+| `/customers` | Customer CRUD — search, paginate, add, edit, delete |
+| `/today` · `/leads` · `/sales` · `/products` · `/imports` · `/analytics` · `/settings` | In the shell; feature ships in its phase |
 | `/account` | Clerk-synced profile |
 | `/onboarding` | Business setup wizard (shown when you have no business) |
 

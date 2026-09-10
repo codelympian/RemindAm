@@ -29,6 +29,12 @@ interface ApiFetchOptions {
   method?: HttpMethod;
   body?: unknown;
   signal?: AbortSignal;
+  /**
+   * Extra request headers (e.g. `x-business-id` for business-scoped routes).
+   * `Authorization` and `Content-Type` are always set by `apiFetch` and take
+   * precedence over anything provided here.
+   */
+  headers?: Record<string, string>;
 }
 
 /**
@@ -41,7 +47,7 @@ export async function apiFetch<T>(
   path: string,
   options: ApiFetchOptions,
 ): Promise<T> {
-  const { token, method = 'GET', body, signal } = options;
+  const { token, method = 'GET', body, signal, headers } = options;
 
   if (!token) {
     throw new ApiRequestError(401, 'You are not signed in.');
@@ -52,6 +58,7 @@ export async function apiFetch<T>(
     response = await fetch(`${API_BASE}${path}`, {
       method,
       headers: {
+        ...headers,
         Authorization: `Bearer ${token}`,
         ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
       },

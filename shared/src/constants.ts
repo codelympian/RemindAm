@@ -35,7 +35,12 @@ export const SCORE_WEIGHTS = {
 
 export const MAX_SCORE = 100;
 
+/** Default and maximum page sizes for paginated list endpoints (§39). */
+export const DEFAULT_PAGE_SIZE = 20;
+export const MAX_PAGE_SIZE = 100;
+
 export const API_ROUTES = {
   HEALTH: '/health',
   BUSINESSES: '/businesses',
+  CUSTOMERS: '/customers',
 } as const;

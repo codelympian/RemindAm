@@ -1,13 +1,10 @@
-import { Users } from 'lucide-react';
-import { PlaceholderScreen } from '@/components/app-shell/placeholder-screen';
+import { CustomersView } from './customers-view';
 
+/**
+ * Customers section. A thin server component that renders the client
+ * {@link CustomersView}, which reads the active business from context and loads
+ * customers from the API via React Query.
+ */
 export default function CustomersPage(): React.JSX.Element {
-  return (
-    <PlaceholderScreen
-      icon={Users}
-      title="Customers"
-      phase="Phase 4"
-      description="Create, search, tag and profile your customers — purchase history, outstanding debt, lead status and last contact — all in one place."
-    />
-  );
+  return <CustomersView />;
 }
