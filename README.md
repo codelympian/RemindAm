@@ -162,6 +162,13 @@ signed off before the next begins.
 
 **Next:** Phase 5 — Products.
 
+> **Roadmap note — marketing site.** The public landing page (master prompt §14)
+> is not assigned a phase in §43. It is scheduled for **after Phase 12 — Today /
+> Dashboard**, the first point at which the hero screenshots show the real
+> recommendation engine rather than a mock. Pricing stays static copy until
+> Phase 17 wires the configurable subscription plans. Until then `/` is a
+> placeholder hero, not the §14 site.
+
 ### Authenticated routes
 
 | Route | Status |
