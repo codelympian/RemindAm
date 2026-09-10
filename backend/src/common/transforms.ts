@@ -18,3 +18,15 @@ export const emptyToUndefined = ({ value }: TransformFnParams): unknown => {
   const trimmed = value.trim();
   return trimmed.length > 0 ? trimmed : undefined;
 };
+
+/**
+ * Coerces the `"true"` / `"false"` strings a query string carries into real
+ * booleans so `@IsBoolean()` can validate them. Anything else — including a
+ * genuine boolean from a JSON body, or a bad value that should fail validation —
+ * passes through unchanged.
+ */
+export const toBoolean = ({ value }: TransformFnParams): unknown => {
+  if (value === 'true') return true;
+  if (value === 'false') return false;
+  return value;
+};

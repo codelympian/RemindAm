@@ -39,8 +39,17 @@ export const MAX_SCORE = 100;
 export const DEFAULT_PAGE_SIZE = 20;
 export const MAX_PAGE_SIZE = 100;
 
+/**
+ * Product money and quantity ceilings, mirroring the Postgres column types
+ * (`Decimal(14, 2)` and 32-bit `integer`). Shared so the form and the API DTOs
+ * reject the same values instead of drifting apart.
+ */
+export const MAX_PRODUCT_MONEY = 999_999_999_999.99;
+export const MAX_PRODUCT_QUANTITY = 2_000_000_000;
+
 export const API_ROUTES = {
   HEALTH: '/health',
   BUSINESSES: '/businesses',
   CUSTOMERS: '/customers',
+  PRODUCTS: '/products',
 } as const;

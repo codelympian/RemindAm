@@ -1,13 +1,10 @@
-import { Package } from 'lucide-react';
-import { PlaceholderScreen } from '@/components/app-shell/placeholder-screen';
+import { ProductsView } from './products-view';
 
+/**
+ * Products section. A thin server component that renders the client
+ * {@link ProductsView}, which reads the active business from context and loads
+ * the catalogue from the API via React Query.
+ */
 export default function ProductsPage(): React.JSX.Element {
-  return (
-    <PlaceholderScreen
-      icon={Package}
-      title="Products"
-      phase="Phase 5"
-      description="Manage your product catalogue — names, prices and details — ready to attach to sales and recommendations."
-    />
-  );
+  return <ProductsView />;
 }

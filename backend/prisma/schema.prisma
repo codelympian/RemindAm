@@ -130,6 +130,7 @@ model Product {
   businessId       String   @map("business_id") @db.Uuid
   name             String
   sku              String?
+  category         String?
   description      String?
   price            Decimal  @default(0) @db.Decimal(14, 2)
   cost             Decimal  @default(0) @db.Decimal(14, 2)
@@ -143,6 +144,9 @@ model Product {
   variants  ProductVariant[]
   saleItems SaleItem[]
 
+  // SKUs identify a product within one business's catalogue. Postgres treats
+  // NULLs as distinct, so products without a SKU are unaffected.
+  @@unique([businessId, sku])
   @@index([businessId])
   @@map("products")
 }

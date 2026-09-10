@@ -159,8 +159,21 @@ signed off before the next begins.
   search, pagination, an accessible create/edit dialog, a delete confirmation,
   and honest empty / no-match / loading / error states. _Backend unit tests,
   typecheck, lint, and production build green._
+- **Phase 5 — Product system** ✅ Full product CRUD as a business-scoped
+  catalogue — a list of what the business sells. `/api/products` covers create,
+  a paginated list ordered by name, case-insensitive search by name/SKU,
+  filtering by category, read, update and delete, plus
+  `/api/products/categories` for the categories already in use. SKUs are unique
+  per business, so a duplicate is a clear 409 rather than silent bad data, and
+  prices are stored as `Decimal(14,2)` and validated against shared ceilings
+  both sides agree on. The Products screen offers search, a category filter, an
+  add/edit dialog whose category box suggests categories you have already used,
+  and a delete confirmation. Stock quantity, reorder threshold, cost and
+  active/inactive stay in the database and API — they belong to Sales and the
+  reorder logic in later phases rather than to this screen. _Backend unit tests
+  (55), typecheck, lint, and production build green._
 
-**Next:** Phase 5 — Products.
+**Next:** Phase 6 — Sales.
 
 > **Roadmap note — marketing site.** The public landing page (master prompt §14)
 > is not assigned a phase in §43. It is scheduled for **after Phase 12 — Today /
@@ -175,7 +188,8 @@ signed off before the next begins.
 | --- | --- |
 | `/dashboard` | Workspace landing (active business) |
 | `/customers` | Customer CRUD — search, paginate, add, edit, delete |
-| `/today` · `/leads` · `/sales` · `/products` · `/imports` · `/analytics` · `/settings` | In the shell; feature ships in its phase |
+| `/products` | Product catalogue — search, filter by category, add, edit, delete |
+| `/today` · `/leads` · `/sales` · `/imports` · `/analytics` · `/settings` | In the shell; feature ships in its phase |
 | `/account` | Clerk-synced profile |
 | `/onboarding` | Business setup wizard (shown when you have no business) |
 

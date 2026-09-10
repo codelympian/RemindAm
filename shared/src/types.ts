@@ -130,3 +130,75 @@ export interface CustomerListParams {
   page?: number;
   pageSize?: number;
 }
+
+/**
+ * A product in the business's catalogue, as returned by the API. Scoped to a
+ * single business (tenant) exactly like {@link Customer}: the server resolves
+ * `businessId` from the validated `x-business-id` header, never from the client.
+ *
+ * `price` and `cost` are stored as `Decimal(14,2)` and serialized as numbers —
+ * safely within IEEE-754 integer precision at this scale. `lowStock` is derived
+ * on the server (business rules never live in the frontend, §46): it is only
+ * true when a reorder threshold is actually set, so catalogues that don't track
+ * stock never show a meaningless warning (§36).
+ */
+export interface Product {
+  id: string;
+  businessId: string;
+  name: string;
+  sku: string | null;
+  category: string | null;
+  description: string | null;
+  price: number;
+  cost: number;
+  stockQuantity: number;
+  reorderThreshold: number;
+  active: boolean;
+  lowStock: boolean;
+  createdAt: string; // ISO 8601
+  updatedAt: string; // ISO 8601
+}
+
+/**
+ * Request body for `POST /api/products`. The owning business comes from the
+ * `x-business-id` header (re-validated against the caller's memberships), so it
+ * is never part of this payload. Omitted numeric fields fall back to the column
+ * defaults (0), and `active` defaults to true.
+ */
+export interface CreateProductInput {
+  name: string;
+  sku?: string | null;
+  category?: string | null;
+  description?: string | null;
+  price?: number;
+  cost?: number;
+  stockQuantity?: number;
+  reorderThreshold?: number;
+  active?: boolean;
+}
+
+/** Request body for `PATCH /api/products/:id` — any subset of the mutable fields. */
+export interface UpdateProductInput {
+  name?: string;
+  sku?: string | null;
+  category?: string | null;
+  description?: string | null;
+  price?: number;
+  cost?: number;
+  stockQuantity?: number;
+  reorderThreshold?: number;
+  active?: boolean;
+}
+
+/**
+ * Query parameters for `GET /api/products`. `q` searches name/SKU
+ * (case-insensitive); `category` narrows to one category and `active` filters by
+ * status (both omitted shows everything). Results are ordered by name.
+ */
+export interface ProductListParams {
+  q?: string;
+  category?: string;
+  active?: boolean;
+  page?: number;
+  pageSize?: number;
+}
