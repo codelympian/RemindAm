@@ -172,8 +172,27 @@ signed off before the next begins.
   active/inactive stay in the database and API — they belong to Sales and the
   reorder logic in later phases rather than to this screen. _Backend unit tests
   (55), typecheck, lint, and production build green._
+- **Phase 6 — Sales** ✅ Recording a sale is the event the whole product is
+  built on — every later recommendation reads sales history. Business-scoped
+  `/api/sales` covers create, a paginated list (newest first, with customer and
+  payment-status filters), read, a header-only update and delete. A sale carries
+  one or more line items — each optionally linked to a catalogue product, which
+  snapshots its name and price so a later price change never rewrites past
+  sales — plus a discount, a payment status (paid / partial / unpaid) and a
+  date; the server computes every subtotal and total as `Decimal` and owns them.
+  An unpaid or partial sale also writes a linked `Debt` in the same atomic
+  transaction, so the "who owes me" data exists from day one — which is why such
+  a sale must name a customer, while a paid sale can be an anonymous walk-in.
+  Recording a sale deliberately leaves product stock untouched (products stay a
+  catalogue). Editing is header-only — to change what was sold you delete and
+  re-record, keeping totals unambiguous. The Sales screen adds a line-item
+  editor with live totals, searchable server-backed customer and product pickers
+  (a new accessible combobox that scales past a single page of results), a
+  customer filter, a status filter, and honest empty / no-match / loading /
+  error states. _Backend unit tests (81), typecheck, lint, and production build
+  green._
 
-**Next:** Phase 6 — Sales.
+**Next:** Phase 7 — Leads.
 
 > **Roadmap note — marketing site.** The public landing page (master prompt §14)
 > is not assigned a phase in §43. It is scheduled for **after Phase 12 — Today /
@@ -189,7 +208,8 @@ signed off before the next begins.
 | `/dashboard` | Workspace landing (active business) |
 | `/customers` | Customer CRUD — search, paginate, add, edit, delete |
 | `/products` | Product catalogue — search, filter by category, add, edit, delete |
-| `/today` · `/leads` · `/sales` · `/imports` · `/analytics` · `/settings` | In the shell; feature ships in its phase |
+| `/sales` | Record sales — line items, discount, payment status, linked debts; filter by customer and status |
+| `/today` · `/leads` · `/imports` · `/analytics` · `/settings` | In the shell; feature ships in its phase |
 | `/account` | Clerk-synced profile |
 | `/onboarding` | Business setup wizard (shown when you have no business) |
 

@@ -47,9 +47,17 @@ export const MAX_PAGE_SIZE = 100;
 export const MAX_PRODUCT_MONEY = 999_999_999_999.99;
 export const MAX_PRODUCT_QUANTITY = 2_000_000_000;
 
+/**
+ * Maximum line items on a single sale. A sale's money and quantity fields reuse
+ * the product ceilings above — `SaleItem` shares the same `Decimal(14, 2)` and
+ * 32-bit `integer` column types, so the form and DTOs reject the same values.
+ */
+export const MAX_SALE_ITEMS = 100;
+
 export const API_ROUTES = {
   HEALTH: '/health',
   BUSINESSES: '/businesses',
   CUSTOMERS: '/customers',
   PRODUCTS: '/products',
+  SALES: '/sales',
 } as const;
