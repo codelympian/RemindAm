@@ -4,7 +4,7 @@
  * both apps rely on.
  */
 
-import { MembershipRole, PaymentStatus } from './enums';
+import { LeadStatus, MembershipRole, PaymentStatus } from './enums';
 
 export interface ApiError {
   statusCode: number;
@@ -295,6 +295,95 @@ export interface UpdateSaleInput {
 export interface SaleListParams {
   customerId?: string;
   status?: PaymentStatus;
+  page?: number;
+  pageSize?: number;
+}
+
+/**
+ * A single logged touch on a lead (a call, a WhatsApp message, a meeting note).
+ * Immutable once written — the running history is what feeds a customer's
+ * intelligence in later phases. Newest first in {@link Lead.interactions}.
+ */
+export interface LeadInteraction {
+  id: string;
+  leadId: string;
+  note: string | null;
+  createdAt: string; // ISO 8601
+}
+
+/**
+ * A lead: an interested buyer moving through the pipeline (NEW → … → WON / LOST).
+ * Scoped to a single business (tenant) exactly like {@link Sale}: the server
+ * resolves `businessId` from the validated `x-business-id` header, never from the
+ * client.
+ *
+ * A lead carries no name of its own — its identity comes from the linked
+ * {@link Customer}, so in this build a lead always names one (the create contract
+ * requires it). `customerId` stays nullable on read only defensively. `value` is
+ * the expected deal size (`Decimal(14, 2)` as a number); `lastInteractionAt` is
+ * derived on the server from the most recent interaction (business rules never
+ * live in the frontend, §46).
+ */
+export interface Lead {
+  id: string;
+  businessId: string;
+  customerId: string | null;
+  customerName: string | null;
+  source: string | null;
+  interestedProduct: string | null;
+  status: LeadStatus;
+  value: number;
+  nextFollowUpAt: string | null; // ISO 8601
+  lastInteractionAt: string | null; // ISO 8601
+  interactions: LeadInteraction[];
+  createdAt: string; // ISO 8601
+  updatedAt: string; // ISO 8601
+}
+
+/**
+ * Request body for `POST /api/leads`. The owning business comes from the
+ * `x-business-id` header (re-validated against the caller's memberships), so it
+ * is never part of this payload. A lead must name a customer. `status` defaults
+ * to NEW and `value` to 0; an optional `note` records a first interaction in the
+ * same write.
+ */
+export interface CreateLeadInput {
+  customerId: string;
+  source?: string | null;
+  interestedProduct?: string | null;
+  status?: LeadStatus;
+  value?: number;
+  nextFollowUpAt?: string | null;
+  note?: string | null;
+}
+
+/**
+ * Request body for `PATCH /api/leads/:id` — any subset of the mutable fields.
+ * The customer can be reassigned but not cleared (a lead always names one);
+ * passing `null` for `source`, `interestedProduct` or `nextFollowUpAt` clears it.
+ */
+export interface UpdateLeadInput {
+  customerId?: string;
+  source?: string | null;
+  interestedProduct?: string | null;
+  status?: LeadStatus;
+  value?: number;
+  nextFollowUpAt?: string | null;
+}
+
+/** Request body for `POST /api/leads/:id/interactions` — logs one note. */
+export interface CreateLeadInteractionInput {
+  note: string;
+}
+
+/**
+ * Query parameters for `GET /api/leads`. `customerId` and `status` narrow the
+ * list (both omitted shows everything); results are ordered newest-first by
+ * `createdAt`. Paging defaults live in {@link DEFAULT_PAGE_SIZE}.
+ */
+export interface LeadListParams {
+  customerId?: string;
+  status?: LeadStatus;
   page?: number;
   pageSize?: number;
 }

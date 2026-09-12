@@ -54,10 +54,20 @@ export const MAX_PRODUCT_QUANTITY = 2_000_000_000;
  */
 export const MAX_SALE_ITEMS = 100;
 
+/**
+ * Lead free-text and note length caps. `source` and `interestedProduct` are
+ * short free-text fields; an interaction `note` can run to a paragraph. Shared
+ * so the lead form and the API DTOs reject the same lengths. A lead's `value`
+ * reuses {@link MAX_PRODUCT_MONEY} (the same `Decimal(14, 2)` column type).
+ */
+export const MAX_LEAD_TEXT_LENGTH = 160;
+export const MAX_LEAD_NOTE_LENGTH = 2000;
+
 export const API_ROUTES = {
   HEALTH: '/health',
   BUSINESSES: '/businesses',
   CUSTOMERS: '/customers',
   PRODUCTS: '/products',
   SALES: '/sales',
+  LEADS: '/leads',
 } as const;

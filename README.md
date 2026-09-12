@@ -191,8 +191,23 @@ signed off before the next begins.
   customer filter, a status filter, and honest empty / no-match / loading /
   error states. _Backend unit tests (81), typecheck, lint, and production build
   green._
+- **Phase 7 — Leads** ✅ The pipeline of interested buyers moving from first
+  enquiry to won or lost, so no prospect slips through the cracks. Business-scoped
+  `/api/leads` covers create, a paginated list (newest first, with customer and
+  status filters), read, update and delete, plus
+  `/api/leads/:id/interactions` to log a note. Every lead names a customer —
+  identity and the intelligence a lead feeds belong to the customer — so the form
+  requires one and offers a quick "＋ New customer" (name + optional phone) for a
+  fresh enquiry. The six statuses (new → contacted → interested → negotiating →
+  won → lost) are a plain field: moving a lead to won has **no** side effect (no
+  auto-sale), keeping the model deterministic — recording the actual sale stays
+  the Sales screen's job. Each lead carries a dedicated, add-only interaction
+  timeline (newest first) that later phases read as customer intelligence, and the
+  list row surfaces the last-contact and next-follow-up dates. Deleting a lead
+  removes its interactions too. _Backend unit tests (109), typecheck, lint, and
+  production build green._
 
-**Next:** Phase 7 — Leads.
+**Next:** Phase 8 — Customer timeline.
 
 > **Roadmap note — marketing site.** The public landing page (master prompt §14)
 > is not assigned a phase in §43. It is scheduled for **after Phase 12 — Today /
@@ -209,7 +224,8 @@ signed off before the next begins.
 | `/customers` | Customer CRUD — search, paginate, add, edit, delete |
 | `/products` | Product catalogue — search, filter by category, add, edit, delete |
 | `/sales` | Record sales — line items, discount, payment status, linked debts; filter by customer and status |
-| `/today` · `/leads` · `/imports` · `/analytics` · `/settings` | In the shell; feature ships in its phase |
+| `/leads` | Lead pipeline — six statuses, per-lead interaction timeline; filter by customer and status |
+| `/today` · `/imports` · `/analytics` · `/settings` | In the shell; feature ships in its phase |
 | `/account` | Clerk-synced profile |
 | `/onboarding` | Business setup wizard (shown when you have no business) |
 
