@@ -12,7 +12,11 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { type Customer, type Paginated } from '@remindam/shared';
+import {
+  type Customer,
+  type CustomerTimelineEvent,
+  type Paginated,
+} from '@remindam/shared';
 import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { type AuthenticatedRequest } from '../auth/authenticated-request';
 import { ActiveBusinessId } from '../common/active-business-id.decorator';
@@ -57,6 +61,16 @@ export class CustomersController {
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<Customer> {
     return this.customers.getOne(request.auth.clerkUserId, businessId, id);
+  }
+
+  /** A customer's chronological history (§20), newest-first. Read-only. */
+  @Get(':id/timeline')
+  timeline(
+    @Req() request: AuthenticatedRequest,
+    @ActiveBusinessId() businessId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<CustomerTimelineEvent[]> {
+    return this.customers.getTimeline(request.auth.clerkUserId, businessId, id);
   }
 
   @Patch(':id')

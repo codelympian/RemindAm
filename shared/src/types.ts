@@ -131,6 +131,36 @@ export interface CustomerListParams {
   pageSize?: number;
 }
 
+/** The kinds of event a customer timeline can carry (§20). */
+export type CustomerTimelineEventType =
+  | 'customer_created'
+  | 'purchase'
+  | 'lead_created'
+  | 'lead_interaction';
+
+/**
+ * One entry on a customer's chronological timeline (§20), merged on the server
+ * from real data across the customer's sales, leads and lead interactions and
+ * returned newest-first by `GET /api/customers/:id/timeline`.
+ *
+ * The shape is deliberately flat and presentation-agnostic: the server provides
+ * the *facts* (what happened, when, how much) and the client composes the
+ * sentence — business rules never live in the frontend (§46). `label` is the raw
+ * datum the client phrases (a purchase's item summary, a lead's source, a note's
+ * text); `amount` is money when relevant. `paymentStatus` and `amountOwed` are
+ * set on `purchase` events only — the honest way outstanding debt surfaces — and
+ * are `null` for every other type.
+ */
+export interface CustomerTimelineEvent {
+  id: string; // stable & unique, e.g. `purchase:<saleId>`
+  type: CustomerTimelineEventType;
+  at: string; // ISO 8601 — the event's position on the timeline
+  label: string | null;
+  amount: number | null;
+  paymentStatus: PaymentStatus | null;
+  amountOwed: number | null;
+}
+
 /**
  * A product in the business's catalogue, as returned by the API. Scoped to a
  * single business (tenant) exactly like {@link Customer}: the server resolves

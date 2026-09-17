@@ -279,10 +279,13 @@ function CustomerRow({
 
   return (
     <li className="flex items-center justify-between gap-3 px-4 py-3">
-      <div className="min-w-0">
+      <Link
+        href={`/customers/${customer.id}`}
+        className="-mx-2 min-w-0 flex-1 rounded-lg px-2 py-1 hover:bg-accent"
+      >
         <p className="truncate font-medium">{customer.name}</p>
         <p className="truncate text-sm text-muted-foreground">{contact}</p>
-      </div>
+      </Link>
       <div className="flex shrink-0 items-center gap-1">
         <button
           type="button"

@@ -1,5 +1,9 @@
 import { Test } from '@nestjs/testing';
-import { type Customer, type Paginated } from '@remindam/shared';
+import {
+  type Customer,
+  type CustomerTimelineEvent,
+  type Paginated,
+} from '@remindam/shared';
 import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { type AuthenticatedRequest } from '../auth/authenticated-request';
 import { CustomersController } from './customers.controller';
@@ -23,6 +27,7 @@ describe('CustomersController', () => {
     list: jest.fn(),
     create: jest.fn(),
     getOne: jest.fn(),
+    getTimeline: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
   };
@@ -75,6 +80,26 @@ describe('CustomersController', () => {
 
     expect(service.getOne).toHaveBeenCalledWith('user_123', 'b-1', 'c-1');
     expect(result).toBe(customer);
+  });
+
+  it('delegates timeline with the verified clerk id, active business id and path id', async () => {
+    const events: CustomerTimelineEvent[] = [
+      {
+        id: 'customer:c-1',
+        type: 'customer_created',
+        at: '2026-09-10T10:00:00.000Z',
+        label: null,
+        amount: null,
+        paymentStatus: null,
+        amountOwed: null,
+      },
+    ];
+    service.getTimeline.mockResolvedValue(events);
+
+    const result = await controller.timeline(request, businessId, 'c-1');
+
+    expect(service.getTimeline).toHaveBeenCalledWith('user_123', 'b-1', 'c-1');
+    expect(result).toBe(events);
   });
 
   it('delegates update with the path id and body', async () => {

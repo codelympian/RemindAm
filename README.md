@@ -206,8 +206,22 @@ signed off before the next begins.
   list row surfaces the last-contact and next-follow-up dates. Deleting a lead
   removes its interactions too. _Backend unit tests (109), typecheck, lint, and
   production build green._
+- **Phase 8 — Customer timeline** ✅ The app's first customer profile page, at
+  `/customers/[id]` (its first dynamic route) — the point where the data captured
+  across Phases 4–7 comes together per customer (§20). Business-scoped
+  `/api/customers/:id/timeline` merges the customer's real history — purchases
+  (from sales), new leads, and lead interactions — server-side into one
+  chronological, newest-first list, anchored by a "customer added" event so a
+  real customer's timeline is never empty. Outstanding debt surfaces honestly on
+  the purchase it belongs to (payment status + amount still owed) rather than as
+  a fabricated event. The profile shows an identity header (name, phone, email,
+  notes) that reuses the customer edit dialog, and each customer row on the list
+  now links through to it. The timeline is read-only and carries no computed
+  aggregates — balances, lifetime value and reorder timing are deferred to
+  Phase 10 — Customer intelligence — keeping the phase boundary clean. _Backend
+  unit tests (116), typecheck, lint, and production build green._
 
-**Next:** Phase 8 — Customer timeline.
+**Next:** Phase 9 — Import system.
 
 > **Roadmap note — marketing site.** The public landing page (master prompt §14)
 > is not assigned a phase in §43. It is scheduled for **after Phase 12 — Today /

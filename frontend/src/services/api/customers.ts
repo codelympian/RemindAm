@@ -2,6 +2,7 @@ import type {
   CreateCustomerInput,
   Customer,
   CustomerListParams,
+  CustomerTimelineEvent,
   Paginated,
   UpdateCustomerInput,
 } from '@remindam/shared';
@@ -47,6 +48,25 @@ export function getCustomer(
     token,
     headers: businessHeaders(businessId),
   });
+}
+
+/**
+ * `GET /api/customers/:id/timeline` — the customer's chronological history
+ * (purchases, leads and interactions), already merged and sorted newest-first by
+ * the server. Read-only; business rules live on the backend (§46).
+ */
+export function listCustomerTimeline(
+  token: string | null,
+  businessId: string,
+  id: string,
+): Promise<CustomerTimelineEvent[]> {
+  return apiFetch<CustomerTimelineEvent[]>(
+    `${API_ROUTES.CUSTOMERS}/${id}/timeline`,
+    {
+      token,
+      headers: businessHeaders(businessId),
+    },
+  );
 }
 
 /** `POST /api/customers` — create a customer in the active business. */
