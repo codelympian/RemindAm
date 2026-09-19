@@ -27,12 +27,17 @@ interface ApiFetchOptions {
   /** Clerk session token; `null` short-circuits to a 401-style error. */
   token: string | null;
   method?: HttpMethod;
+  /**
+   * Request body. A plain object is JSON-encoded; a {@link FormData} is sent
+   * as multipart (for file uploads) with the browser setting the boundary.
+   */
   body?: unknown;
   signal?: AbortSignal;
   /**
    * Extra request headers (e.g. `x-business-id` for business-scoped routes).
-   * `Authorization` and `Content-Type` are always set by `apiFetch` and take
-   * precedence over anything provided here.
+   * `Authorization` is always set by `apiFetch` and takes precedence over
+   * anything provided here; `Content-Type` is set for JSON bodies only (a
+   * `FormData` body carries its own multipart content type).
    */
   headers?: Record<string, string>;
 }
@@ -53,6 +58,11 @@ export async function apiFetch<T>(
     throw new ApiRequestError(401, 'You are not signed in.');
   }
 
+  // A FormData body is sent as-is (multipart); anything else is JSON-encoded.
+  // The browser must set the multipart boundary itself, so we never add a
+  // Content-Type for FormData.
+  const isForm = body instanceof FormData;
+
   let response: Response;
   try {
     response = await fetch(`${API_BASE}${path}`, {
@@ -60,9 +70,16 @@ export async function apiFetch<T>(
       headers: {
         ...headers,
         Authorization: `Bearer ${token}`,
-        ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
+        ...(body === undefined || isForm
+          ? {}
+          : { 'Content-Type': 'application/json' }),
       },
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body:
+        body === undefined
+          ? undefined
+          : isForm
+            ? body
+            : JSON.stringify(body),
       cache: 'no-store',
       signal,
     });

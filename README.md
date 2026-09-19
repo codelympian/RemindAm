@@ -220,8 +220,21 @@ signed off before the next begins.
   aggregates — balances, lifetime value and reorder timing are deferred to
   Phase 10 — Customer intelligence — keeping the phase boundary clean. _Backend
   unit tests (116), typecheck, lint, and production build green._
+- **Phase 9 — Import system** ✅ Bulk customer import (§24) at `/imports`, a
+  guided three-step wizard — upload → map columns → review — that writes nothing
+  until the user confirms. The frontend only uploads the raw file and guides the
+  review; the backend does all the work (§46): it parses both CSV and XLSX
+  server-side (so a numeric phone cell can't be silently reformatted), suggests a
+  column mapping from the headers, then validates every row against the customer
+  rules and flags duplicates by phone **or** email — against both the existing
+  customers and earlier rows in the same file. The commit is one transaction: the
+  new customers, plus a persisted `Import` and one `ImportRow` per input line, so
+  every import is a permanent, re-openable audit. The summary is honest —
+  imported / duplicate / error counts with each skipped row and its reason shown,
+  never silently discarded — and a Recent imports list reopens any past outcome.
+  _Backend unit tests (146), typecheck, lint, and production build green._
 
-**Next:** Phase 9 — Import system.
+**Next:** Phase 10 — Customer intelligence.
 
 > **Roadmap note — marketing site.** The public landing page (master prompt §14)
 > is not assigned a phase in §43. It is scheduled for **after Phase 12 — Today /
@@ -239,7 +252,8 @@ signed off before the next begins.
 | `/products` | Product catalogue — search, filter by category, add, edit, delete |
 | `/sales` | Record sales — line items, discount, payment status, linked debts; filter by customer and status |
 | `/leads` | Lead pipeline — six statuses, per-lead interaction timeline; filter by customer and status |
-| `/today` · `/imports` · `/analytics` · `/settings` | In the shell; feature ships in its phase |
+| `/imports` | Guided customer import — CSV/XLSX upload, column mapping, duplicate detection, honest per-row summary |
+| `/today` · `/analytics` · `/settings` | In the shell; feature ships in its phase |
 | `/account` | Clerk-synced profile |
 | `/onboarding` | Business setup wizard (shown when you have no business) |
 

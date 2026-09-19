@@ -4,7 +4,7 @@
  * both apps rely on.
  */
 
-import { LeadStatus, MembershipRole, PaymentStatus } from './enums';
+import { ImportStatus, LeadStatus, MembershipRole, PaymentStatus } from './enums';
 
 export interface ApiError {
   statusCode: number;
@@ -414,6 +414,88 @@ export interface CreateLeadInteractionInput {
 export interface LeadListParams {
   customerId?: string;
   status?: LeadStatus;
+  page?: number;
+  pageSize?: number;
+}
+
+/** The customer fields a spreadsheet column can be mapped onto (§24). */
+export type ImportableCustomerField = 'name' | 'phone' | 'email' | 'notes';
+
+/**
+ * A column mapping: each importable customer field points at a 0-based source
+ * column index, or `null` when that field is not imported. `name` must resolve
+ * to a column at commit time (a customer without a name is meaningless); the
+ * rest are optional. The server suggests one from the file's headers and the
+ * user can override it before confirming.
+ */
+export interface CustomerColumnMapping {
+  name: number | null;
+  phone: number | null;
+  email: number | null;
+  notes: number | null;
+}
+
+/**
+ * Result of `POST /api/imports/preview` — the parsed headers, a small sample of
+ * rows, the total row count, and a suggested mapping. This step **persists
+ * nothing**: it exists so the user can confirm the columns and mapping before
+ * anything is written (§24 — "guided review before saving").
+ */
+export interface ImportPreview {
+  columns: string[];
+  sampleRows: string[][]; // at most IMPORT_PREVIEW_ROWS rows
+  totalRows: number;
+  suggestedMapping: CustomerColumnMapping;
+}
+
+/** What happened to one input row: it was imported, skipped as a duplicate, or rejected. */
+export type ImportRowStatus = 'imported' | 'duplicate' | 'error';
+
+/**
+ * The outcome of a single input row, so the user can understand exactly what
+ * happened to their data — nothing is ever silently discarded (§24). `rowIndex`
+ * is 0-based over the data rows (the header is excluded); `message` explains a
+ * duplicate or error and is `null` for an imported row.
+ */
+export interface ImportRowResult {
+  rowIndex: number;
+  status: ImportRowStatus;
+  message: string | null;
+  data: {
+    name: string | null;
+    phone: string | null;
+    email: string | null;
+    notes: string | null;
+  };
+}
+
+/**
+ * The full outcome of one import, returned by `POST /api/imports` and
+ * `GET /api/imports/:id`. The four counts always sum to `totalRows`
+ * (imported + duplicate + error), and `rows` carries the per-row detail that
+ * makes the summary honest and auditable. Scoped to a single business exactly
+ * like every other resource.
+ */
+export interface ImportSummary {
+  id: string;
+  filename: string;
+  status: ImportStatus;
+  totalRows: number;
+  validRows: number; // rows imported as new customers
+  duplicateRows: number;
+  errorRows: number;
+  createdAt: string; // ISO 8601
+  rows: ImportRowResult[];
+}
+
+/** A row in the import history list (`GET /api/imports`) — the summary without the per-row detail. */
+export type ImportListItem = Omit<ImportSummary, 'rows'>;
+
+/**
+ * Query parameters for `GET /api/imports`. Results are ordered newest-first by
+ * `createdAt`; paging defaults live in {@link DEFAULT_PAGE_SIZE}.
+ */
+export interface ImportListParams {
   page?: number;
   pageSize?: number;
 }

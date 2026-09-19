@@ -63,6 +63,17 @@ export const MAX_SALE_ITEMS = 100;
 export const MAX_LEAD_TEXT_LENGTH = 160;
 export const MAX_LEAD_NOTE_LENGTH = 2000;
 
+/**
+ * Import ceilings, shared so the upload form and the API agree on the same
+ * limits instead of drifting apart. A file is capped at 5 MB and 5,000 data
+ * rows (a spreadsheet larger than a small business's whole customer book);
+ * the preview returns at most the first {@link IMPORT_PREVIEW_ROWS} rows so the
+ * user can eyeball the mapping without shipping the whole file back.
+ */
+export const MAX_IMPORT_FILE_BYTES = 5 * 1024 * 1024;
+export const MAX_IMPORT_ROWS = 5000;
+export const IMPORT_PREVIEW_ROWS = 20;
+
 export const API_ROUTES = {
   HEALTH: '/health',
   BUSINESSES: '/businesses',
@@ -70,4 +81,5 @@ export const API_ROUTES = {
   PRODUCTS: '/products',
   SALES: '/sales',
   LEADS: '/leads',
+  IMPORTS: '/imports',
 } as const;
